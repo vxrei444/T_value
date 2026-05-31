@@ -1,0 +1,12 @@
+# テキストデータやCSV、PDFは絶対にGitHubに上げない
+*.pdf
+*.csv
+*.xlsx
+
+# 自動保存用のフォルダが作られていた場合、それも除外
+uploaded_pdfs/
+
+# Pythonが自動生成するキャッシュフォルダなどを除外
+__pycache__/
+.pytest_cache/
+.streamlit/
