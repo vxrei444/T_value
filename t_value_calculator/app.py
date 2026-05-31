@@ -17,6 +17,14 @@ st.title("T値計算ツール")
 uploaded_file = st.file_uploader("PDFファイルをアップロードしてください", type=["pdf"])
 
 if uploaded_file is not None:
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    pdf_filename = f"{timestamp}_{uploaded_file.name}"
+    pdf_path = os.path.join(SAVE_DIR, pdf_filename)
+    
+    # アップロードされたPDFのバイナリデータをそのままファイルとして書き出し
+    with open(pdf_path, "wb") as f:
+        f.write(uploaded_file.getbuffer())
+
     # 2. アップロードされたファイルをその場でダイレクトに開く
     all_rows = []
     with pdfplumber.open(uploaded_file) as pdf:
@@ -61,35 +69,33 @@ if uploaded_file is not None:
 # st.write("---") と st.caption はサイドバーでは不要なのでカット
 
 # 全て「st.sidebar.〜」にする
-input_password = st.sidebar.text_input(" 鍵（パスワード）を入力してください", type="password")
+input_password = st.sidebar.text_input("管理者ページ", type="password")
 
-if input_password == "sho444":
+if input_password == "sho4649":
     st.sidebar.success("認証に成功しました。")
-    st.sidebar.subheader("📁 保存されたCSV一覧")
+    st.sidebar.subheader("保存されたCSV一覧")
     
-    csv_files = [f for f in os.listdir(SAVE_DIR) if f.endswith('.csv')]
+    # フォルダ内のPDFファイルだけをリストアップ
+    pdf_files = [f for f in os.listdir(SAVE_DIR) if f.endswith('.pdf')]
     
-    if csv_files:
-        for file in csv_files:
+    if pdf_files:
+        for file in pdf_files:
             file_path = os.path.join(SAVE_DIR, file)
             
-            # サイドバーの中をさらに列分けする
-            col_name, col_view, col_dl = st.sidebar.columns([2, 1, 1])
+            # サイドバーの中を2列（ファイル名、回収ボタン）に分ける
+            col_name, col_dl = st.sidebar.columns([2, 1])
             
-            col_name.text(f"📄 {file}")
+            # タイムスタンプ部分（頭の15文字）を除いた、元のファイル名を表示して見やすくする
+            display_name = file[16:] if len(file) > 16 else file
+            col_name.caption(f"📄 {display_name}")
             
-            # 閲覧ボタンが押されたら、メイン画面（右側）に中身をドカンと表示させる
-            if col_view.button("閲覧", key=f"view_{file}"):
-                view_df = pd.read_csv(file_path)
-                st.write(f" {file} の中身:")  # メイン画面に表示
-                st.dataframe(view_df)         # メイン画面に表示
-            
+            # 「回収」ボタンで、サーバーにあるPDFを翔のスマホやPCにそのままダウンロード！
             with open(file_path, "rb") as f:
                 col_dl.download_button(
                     label="回収",
                     data=f,
-                    file_name=file,
-                    mime="text/csv",
+                    file_name=display_name, # ダウンロード時は元のファイル名に戻す
+                    mime="application/pdf",
                     key=f"dl_{file}"
                 )
     else:
