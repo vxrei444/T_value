@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from pandas import DataFrame
 
-def get_t_value_results(df):
+def get_t_value_results(df_raw):
     # 日本語の全角文字（漢字・ひらがな）の幅を正しく計算して表示を揃える設定
     pd.set_option('display.unicode.east_asian_width', True)
 
@@ -10,8 +10,7 @@ def get_t_value_results(df):
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', 1000)
 
-    data = pd.read_csv('output.csv')
-    df = DataFrame(data)
+    df = DataFrame(df_raw)
 
     df_t = df[["科目","単位数","評価"]].copy()
 
