@@ -3,7 +3,7 @@ import pdfplumber
 import pandas as pd
 
 # T_Value.py から関数をインポート
-from T_Value import get_t_value_results
+from t_value_calculator.T_Value import get_t_value_results
 
 # ファイルアップローダーのみを配置
 uploaded_file = st.file_uploader("PDFファイルをアップロードしてください", type=["pdf"])
