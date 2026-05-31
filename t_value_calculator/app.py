@@ -17,11 +17,18 @@ if uploaded_file is not None:
             if table:
                 all_rows.extend(table)
     
-    if all_rows:
-        # 生のデータを一旦DataFrameにする（1行目をヘッダーに指定）
-        df_raw = pd.DataFrame(all_rows[1:], columns=all_rows[0])
+# ◯ 修正後（1行目を確実に列名として認識させる安全な書き方）
+if all_rows:
+    # 1行目をヘッダー（列名）として抽出し、前後の余計な空白をカット
+    headers = [str(cell).strip() if cell is not None else "" for cell in all_rows[0]]
+    
+    # 2行目以降をデータとして読み込み、列名を指定
+    df_raw = pd.DataFrame(all_rows[1:], columns=headers)
+    
+    # 【デバッグ用のお守り】もし列名が「単位数」になっていたら「単位」に自動変換
+    df_raw = df_raw.rename(columns={"単位数": "単位"})
         
-        try:
+    try:
             # 3. T_Value.py の厳密なロジックを叩き、3つのデータを取得
             # （中で int型 へのキャストや不要行のカットが完結している前提）
             df_clean, tanni_sum, t_value = get_t_value_results(df_raw)
@@ -34,5 +41,5 @@ if uploaded_file is not None:
             col1.metric("総修得単位数", f"{tanni_sum} 単位")
             col2.metric("T値", f"{t_value} pt")
             
-        except Exception as e:
+    except Exception as e:
             st.error(f"エラーが発生しました: {e}")
