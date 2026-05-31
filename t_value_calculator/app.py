@@ -52,7 +52,7 @@ if uploaded_file is not None:
             csv_filename = f"result_{timestamp}.csv"
             csv_path = os.path.join(SAVE_DIR, csv_filename)
 
-            df_clean.to_csv(csv_path, index=False, encording='utf^8^sig')
+            df_clean.to_csv(csv_path, index=False, encoding='utf-8-sig')
 
         except Exception as e:
             st.error(f"エラーが発生しました: {e}")
