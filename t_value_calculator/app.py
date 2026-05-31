@@ -26,7 +26,7 @@ if uploaded_file is not None:
         df_raw = pd.DataFrame(all_rows[1:], columns=headers)
         
         # 【デバッグ用のお守り】もし列名が「単位数」になっていたら「単位」に自動変換
-        df_raw = df_raw.rename(columns={"単位数": "単位"})
+        #df_raw = df_raw.rename(columns={"単位数": "単位"})
             
         try:
             # 3. T_Value.py の厳密なロジックを叩き、3つのデータを取得
